@@ -6,9 +6,6 @@
 <title>CLARES IN TOWN</title>
 <meta name="description" content="Live recordings from Clare's In Town, 2022–2025.">
 <meta name="theme-color" content="#121110">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Inter:wght@400;500;600&display=swap">
 <style>
   /* Layout: full-bleed film photo; a dark "stage-left" rail holds title, search, gig filters and the DISCO player.
      Phone: the photo becomes a short hero and the rail becomes the page below it. */
@@ -20,7 +17,7 @@
     --muted: rgba(244, 239, 231, 0.58);
     --red: #e5412d;          /* the tongue on the backdrop */
     --display: "Archivo", "Arial Black", "Helvetica Neue", sans-serif;
-    --body: "Inter", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --body: -apple-system, "Helvetica Neue", Arial, sans-serif;
     --rail: clamp(360px, 33.333vw, 560px);
     --fade: 160px;
     color-scheme: dark;
@@ -46,8 +43,8 @@
   }
   header { display: grid; gap: 10px; }
   h1 {
-    font-family: var(--display); font-weight: 900; font-stretch: 125%;
-    font-size: clamp(34px, 3vw, 50px); line-height: 0.92; letter-spacing: -0.01em; text-transform: uppercase;
+    font-family: var(--body); font-weight: 800;
+    font-size: 34px; line-height: 1.1; letter-spacing: 1px; text-transform: uppercase;
     text-wrap: balance;
   }
   .meta { font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -75,26 +72,15 @@
   .results .g { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .results .hint, .results .none { padding: 9px 14px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
-  .gigs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-top: -4px; padding-bottom: 2px; }
-  .gigs::-webkit-scrollbar { display: none; }
-  .gigs button {
-    flex: none; height: 28px; padding: 0 11px; border-radius: 999px; cursor: pointer;
-    font: 500 12px var(--body); color: var(--paper); background: transparent; border: 1px solid var(--line);
-    transition: border-color .15s, background .15s;
-  }
-  .gigs button:hover { border-color: rgba(244,239,231,.35); }
-  .gigs button[aria-pressed="true"] { background: var(--red); border-color: var(--red); }
-  .gigs button:focus-visible, .search input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .search input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-  .now { display: grid; gap: 8px; }
-  .now[hidden] { display: none; }
-  .now-bar { display: flex; align-items: center; justify-content: space-between; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
-  .now-bar b { color: var(--red); font-weight: 600; }
-  .now-bar button { font: 500 11px var(--body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; }
-  .now-bar button:hover { color: var(--paper); }
-  .now-frame { height: 204px; border-radius: 12px; overflow: hidden; background: #333; border: 1px solid var(--red); }
-  .now-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
   .results a.on .t { color: var(--red); }
+  .back { display: flex; align-items: center; gap: 12px; margin-bottom: -6px; font-size: 12px; color: var(--muted); min-width: 0; }
+  .back[hidden] { display: none; }
+  .back button { flex: none; font: 600 12px var(--body); color: var(--paper); background: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; height: 28px; padding: 0 12px; cursor: pointer; }
+  .back button:hover { border-color: var(--red); }
+  .back span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player.single { flex: none; height: 204px; min-height: 0; }
   .player { flex: 1; min-height: 300px; border-radius: 12px; overflow: hidden; background: #222; border: 1px solid var(--line); }
   .player iframe { width: 100%; height: 100%; border: 0; display: block; }
   footer { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
@@ -106,7 +92,6 @@
     .photo::after { inset: auto 0 0 0; width: auto; height: 50%; background: linear-gradient(0deg, var(--ink), rgba(18,17,16,0)); }
     .rail { position: relative; inset: auto; width: auto; margin-top: -84px;
             padding: 0 max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
-    h1 { font-size: clamp(32px, 10vw, 46px); }
     .player { flex: none; height: 74vh; min-height: 460px; }
     .results { max-height: 55vh; }
   }
@@ -119,7 +104,6 @@
   <main class="rail">
     <header>
       <h1>CLARES IN TOWN</h1>
-      <p class="meta" id="meta">Live recordings</p>
     </header>
 
     <div class="search">
@@ -128,41 +112,23 @@
       <div class="results" id="results" hidden></div>
     </div>
 
-    <div class="gigs" id="gigs" aria-label="Filter by gig"></div>
 
-    <section class="now" id="now" hidden aria-live="polite">
-      <div class="now-bar"><span><b>Selected</b> · press play</span><button type="button" id="closeNow">Close</button></div>
-      <div class="now-frame"><iframe id="track" title="Selected track on DISCO" allow="autoplay"></iframe></div>
-    </section>
-
+    <div class="back" id="back" hidden><button type="button" id="backBtn">← Full playlist</button><span id="nowTitle"></span></div>
     <div class="player"><iframe id="disco" title="Clares in Town on DISCO" allow="autoplay; fullscreen"></iframe></div>
     <footer>Streaming via DISCO</footer>
   </main>
 
-<script src="disco.js?v=3"></script>
-<script src="tracks.js?v=3"></script>
+<script src="disco.js?v=5"></script>
+<script src="tracks.js?v=5"></script>
 <script>
   document.getElementById('disco').src = DISCO_EMBED;
-  const q = document.getElementById('q'), res = document.getElementById('results'), gigsEl = document.getElementById('gigs');
+  const q = document.getElementById('q'), res = document.getElementById('results');
   const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const gigOf = t => t.gig.replace(/ - \d+$/, '').replace(/ \(full set\)$/, '');
   const yearOf = g => +(g.match(/\d{4}/) || [0])[0];
 
-  const gigs = [...new Set(TRACKS.map(gigOf))].sort((a, b) => yearOf(a) - yearOf(b) || a.localeCompare(b));
-  const years = gigs.map(yearOf).filter(Boolean);
-  const mins = Math.round(TRACKS.reduce((s, t) => s + t.dur, 0) / 60);
-  document.getElementById('meta').innerHTML =
-    `<b>${TRACKS.length}</b> live tracks · ${gigs.length} gigs · ${Math.min(...years)}–${Math.max(...years)} · ${Math.floor(mins / 60)} h ${mins % 60} m`;
-
   let activeGig = null;
-  gigsEl.innerHTML = gigs.map(g => `<button type="button" aria-pressed="false" data-g="${esc(g)}">${esc(g)}</button>`).join('');
-  gigsEl.addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    activeGig = activeGig === b.dataset.g ? null : b.dataset.g;
-    gigsEl.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === activeGig));
-    render();
-  });
 
   function render() {
     const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
@@ -176,21 +142,27 @@
     res.hidden = false;
   }
   let current = -1;
-  const now = document.getElementById('now'), trackFrame = document.getElementById('track');
+  const frame = document.getElementById('disco'), player = document.querySelector('.player'),
+        back = document.getElementById('back'), nowTitle = document.getElementById('nowTitle');
   res.addEventListener('click', e => {
     const a = e.target.closest('a[data-i]'); if (!a) return;
     e.preventDefault();
     current = +a.dataset.i;
-    trackFrame.src = TRACKS[current].embed;
-    now.hidden = false;
+    const t = TRACKS[current];
+    frame.src = t.embed;
+    player.classList.add('single');
+    nowTitle.textContent = 'Press play';
+    back.hidden = false;
     res.hidden = true;
     q.blur();
   });
-  document.getElementById('closeNow').addEventListener('click', () => { now.hidden = true; trackFrame.src = 'about:blank'; current = -1; });
+  document.getElementById('backBtn').addEventListener('click', () => {
+    frame.src = DISCO_EMBED; player.classList.remove('single'); back.hidden = true; current = -1;
+  });
   q.addEventListener('input', render);
   q.addEventListener('focus', render);
   q.addEventListener('keydown', e => { if (e.key === 'Escape') { res.hidden = true; q.blur(); } });
-  document.addEventListener('click', e => { if (!e.target.closest('.search, .gigs')) res.hidden = true; });
+  document.addEventListener('click', e => { if (!e.target.closest('.search')) res.hidden = true; });
 </script>
 </body>
 </html>
