@@ -86,6 +86,15 @@
   .gigs button[aria-pressed="true"] { background: var(--red); border-color: var(--red); }
   .gigs button:focus-visible, .search input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
+  .now { display: grid; gap: 8px; }
+  .now[hidden] { display: none; }
+  .now-bar { display: flex; align-items: center; justify-content: space-between; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+  .now-bar b { color: var(--red); font-weight: 600; }
+  .now-bar button { font: 500 11px var(--body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; }
+  .now-bar button:hover { color: var(--paper); }
+  .now-frame { height: 204px; border-radius: 12px; overflow: hidden; background: #333; border: 1px solid var(--red); }
+  .now-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .results a.on .t { color: var(--red); }
   .player { flex: 1; min-height: 300px; border-radius: 12px; overflow: hidden; background: #222; border: 1px solid var(--line); }
   .player iframe { width: 100%; height: 100%; border: 0; display: block; }
   footer { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
@@ -120,6 +129,11 @@
     </div>
 
     <div class="gigs" id="gigs" aria-label="Filter by gig"></div>
+
+    <section class="now" id="now" hidden aria-live="polite">
+      <div class="now-bar"><span><b>Selected</b> · press play</span><button type="button" id="closeNow">Close</button></div>
+      <div class="now-frame"><iframe id="track" title="Selected track on DISCO" allow="autoplay"></iframe></div>
+    </section>
 
     <div class="player"><iframe id="disco" title="Clares in Town on DISCO" allow="autoplay; fullscreen"></iframe></div>
     <footer>Streaming via DISCO</footer>
@@ -156,11 +170,23 @@
     const hits = TRACKS.filter(t => (!activeGig || gigOf(t) === activeGig) &&
       words.every(w => (t.title + ' ' + t.gig).toLowerCase().includes(w)));
     res.innerHTML = hits.length
-      ? `<div class="hint">${hits.length} track${hits.length > 1 ? 's' : ''} · opens in DISCO</div>` + hits.map(t =>
-          `<a href="${esc(t.src)}" target="_blank" rel="noopener"><span class="t">${esc(t.title)}</span><span class="d">${fmt(t.dur)}</span><span class="g">${esc(t.gig)}</span></a>`).join('')
+      ? `<div class="hint">${hits.length} track${hits.length > 1 ? 's' : ''} </div>` + hits.map(t =>
+          `<a href="#" data-i="${TRACKS.indexOf(t)}" class="${TRACKS.indexOf(t) === current ? 'on' : ''}"><span class="t">${esc(t.title)}</span><span class="d">${fmt(t.dur)}</span><span class="g">${esc(t.gig)}</span></a>`).join('')
       : '<div class="none">No tracks match</div>';
     res.hidden = false;
   }
+  let current = -1;
+  const now = document.getElementById('now'), trackFrame = document.getElementById('track');
+  res.addEventListener('click', e => {
+    const a = e.target.closest('a[data-i]'); if (!a) return;
+    e.preventDefault();
+    current = +a.dataset.i;
+    trackFrame.src = TRACKS[current].embed;
+    now.hidden = false;
+    res.hidden = true;
+    q.blur();
+  });
+  document.getElementById('closeNow').addEventListener('click', () => { now.hidden = true; trackFrame.src = 'about:blank'; current = -1; });
   q.addEventListener('input', render);
   q.addEventListener('focus', render);
   q.addEventListener('keydown', e => { if (e.key === 'Escape') { res.hidden = true; q.blur(); } });
